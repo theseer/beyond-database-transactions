@@ -18,8 +18,6 @@ $pdo = $factory->getOrderPdo();
 $pdo->beginTransaction();
 
 try {
-    $orderService->createOrder($orderId, $amount);
-
     $event = [
         'type' => 'OrderPlaced',
         'order_id' => $orderId,

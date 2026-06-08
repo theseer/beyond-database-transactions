@@ -32,7 +32,13 @@ $handler = function($event) use ($orderService, $inboxRepo, $factory) {
         // - 'PaymentFailed'    -> 'PAYMENT_FAILED'
         // - 'StockUnavailable' -> 'OUT_OF_STOCK'
 
-        /* IMPLEMENT CODE HERE */
+        if ($event['type'] === 'PaymentCompleted') {
+            $orderService->updateStatus($orderId, 'SUCCESS');
+        } elseif ($event['type'] === 'PaymentFailed') {
+            $orderService->updateStatus($orderId, 'PAYMENT_FAILED');
+        } elseif ($event['type'] === 'StockUnavailable') {
+            $orderService->updateStatus($orderId, 'OUT_OF_STOCK');
+        }
 
         $inboxRepo->markAsProcessed($eventId, json_encode($event));
         $pdo->commit();

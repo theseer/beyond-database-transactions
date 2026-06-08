@@ -28,6 +28,7 @@ try {
 
     echo "Success: Checkout completed.\n";
 
+
 } catch (Exception $e) {
     echo "ERROR in checkout: " . $e->getMessage() . "\n";
 }

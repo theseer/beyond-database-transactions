@@ -33,7 +33,20 @@ $broker->subscribe('OrderPlaced', function($event) use ($stockService, $inboxRep
         // 3. If failed: Write 'StockUnavailable' event to the outbox
         // 4. Mark event as processed in InboxRepo
 
-        /* IMPLEMENT CODE HERE */
+        $success = $stockService->reserve($orderId);
+        if ($success) {
+            $outboxRepo->append([
+                'type' => 'StockReserved',
+                'order_id' => $orderId,
+                'amount' => $event['amount']
+            ]);
+        } else {
+            $outboxRepo->append([
+                'type' => 'StockUnavailable',
+                'order_id' => $orderId
+            ]);
+        }
+        $inboxRepo->markAsProcessed($eventId, json_encode($event));
 
         $pdo->commit();
     } catch (Exception $e) {

@@ -26,9 +26,10 @@ class MessageBroker
     {
         echo "[Broker] Listening for $eventType...\n";
         $lastSize = 0;
-        if (file_exists($this->file)) {
-            $lastSize = filesize($this->file);
-        }
+        /* Start from the beginning of the file to catch already published messages in this demo */
+        // if (file_exists($this->file)) {
+        //     $lastSize = filesize($this->file);
+        // }
 
         while (true) {
             clearstatcache();

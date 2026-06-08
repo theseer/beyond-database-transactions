@@ -71,10 +71,17 @@ class InboxRepository
         return (bool)$stmt->fetchColumn();
     }
 
-    public function markAsProcessed(int $id): void
+    public function markAsProcessed(string $messageId, string $payload): void
     {
-        $stmt = $this->pdo->prepare("UPDATE inbox SET status = 'SUCCESS', processed_at = datetime('now') WHERE id = ?");
-        $stmt->execute([$id]);
+        $stmt = $this->pdo->prepare("INSERT OR REPLACE INTO inbox (id, payload, processed_at) VALUES (?, ?, datetime('now'))");
+        $stmt->execute([$messageId, $payload]);
+    }
+
+    public function hasBeenProcessed(string $messageId): bool
+    {
+        $stmt = $this->pdo->prepare("SELECT 1 FROM inbox WHERE id = ?");
+        $stmt->execute([$messageId]);
+        return (bool)$stmt->fetchColumn();
     }
 
     public function markAsFailed(int $id, string $error): void

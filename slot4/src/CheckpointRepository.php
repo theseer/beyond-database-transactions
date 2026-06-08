@@ -22,8 +22,8 @@ class CheckpointRepository
 
     public function updateCheckpoint(string $name, int $lastId): void
     {
-        $stmt = $this->pdo->prepare("UPDATE checkpoints SET last_processed_id = ? WHERE name = ?");
-        $stmt->execute([$lastId, $name]);
+        $stmt = $this->pdo->prepare("INSERT OR REPLACE INTO checkpoints (name, last_processed_id) VALUES (?, ?)");
+        $stmt->execute([$name, $lastId]);
     }
 
     /**

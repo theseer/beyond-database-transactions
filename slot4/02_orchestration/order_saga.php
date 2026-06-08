@@ -54,4 +54,6 @@ try {
 
 } catch (Exception $e) {
     echo "Critical error in the saga: " . $e->getMessage() . "\n";
+    $stockService->release($orderId);
+    $orderService->updateStatus($orderId, 'CRASHED');
 }

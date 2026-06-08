@@ -34,7 +34,19 @@ $broker->subscribe('StockReserved', function($event) use ($paymentService, $inbo
         // 3. If failed: 'PaymentFailed' event in outbox
         // 4. Mark event as processed
 
-        /* IMPLEMENT CODE HERE */
+        $success = $paymentService->charge($orderId, $amount);
+        if ($success) {
+            $outboxRepo->append([
+                'type' => 'PaymentCompleted',
+                'order_id' => $orderId
+            ]);
+        } else {
+            $outboxRepo->append([
+                'type' => 'PaymentFailed',
+                'order_id' => $orderId
+            ]);
+        }
+        $inboxRepo->markAsProcessed($eventId, json_encode($event));
 
         $pdo->commit();
     } catch (Exception $e) {

@@ -20,14 +20,15 @@ try {
     $stock->prepare($sku);
     $order->prepare($sku);
 
+    $stock->commit();
+    $order->commit();
+
     // 2. The external side effect (Email)
     $email->sendConfirmation('customer@example.com', $sku);
 
     // 3. Simulate an error BEFORE the final commit happens
     //throw new Exception("Crash before DB commit!");
 
-    $stock->commit();
-    $order->commit();
 
     echo "Success: Checkout including email completed.\n";
 
